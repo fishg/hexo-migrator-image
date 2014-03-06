@@ -1,11 +1,11 @@
 {
   "name": "hexo-migrator-image",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Image migrator plugin for Hexo",
   "main": "./bin/migrator",
   "repository": {
     "type": "git",
-    "url": "git@github.com:akfish/hexo-migrator-image.git"
+    "url": "https://github.com/akfish/hexo-migrator-image.git"
   },
   "keywords": ["website", "blog", "cms", "framework", "hexo"],
   "author": "AKFish <akfish@gmail.com> (http://catx.me)",
