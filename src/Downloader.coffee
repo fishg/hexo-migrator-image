@@ -4,6 +4,7 @@ Path = require 'path'
 crypto = require 'crypto'
 http = require 'http'
 colors = require 'colors'
+file = hexo.file
 
 isRemoteUrl = (url) ->
         return url.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/)?
@@ -23,8 +24,7 @@ defaultFileName = (path) ->
 
 module.exports = class Downloader
         constructor: (@imageFolder) ->
-                # TODO: other stuff
-
+                
         download: (img, callback) ->
                 # TODO: download
                 url = img.url
@@ -83,6 +83,6 @@ module.exports = class Downloader
                         callback?(null, to)))
                 rs = fs.createReadStream(from)
                     .on("error", ((err) ->
-                        console.log("COPY ".blue + "ErrR ".green + "%s", to)
+                        console.log("COPY ".blue + "ErrR ".green + "%s", from)
                         callback?(err, to)))
                     .pipe(ws)

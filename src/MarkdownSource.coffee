@@ -1,6 +1,6 @@
 extend = hexo.extend
 util = hexo.util
-file = util.file
+file = hexo.file
 sourceDir = hexo.source_dir
 
 Image = require './MarkdownImage'
@@ -67,26 +67,9 @@ module.exports = class Source
                 @images = []
 
         load: (callback) ->
-                file.read(@path, makeLoaderCallback(@, callback))
+                file.readFile(@path, null, makeLoaderCallback(@, callback))
 
-###
-function(path) {
-     this.migrateImages = function(folder, callback) {
-        workers = [];
-        
-        this.images.forEach(function(img) {
-            workers.push(makeWorker(img, folder));
-        });
-
-        if (workers.length > 0){
-            async.parallel(workers, function(err, result) {
-                callback(err, result);
-            });
-        } 
-        callback(null, null);
-    };
-    
- 
-};
-
-###
+        update: (callback) ->
+                # TODO
+                callback?(null, @)
+                

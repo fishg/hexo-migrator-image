@@ -5,7 +5,7 @@ extend = hexo.extend;
 
 util = hexo.util;
 
-file = util.file;
+file = hexo.file;
 
 sourceDir = hexo.source_dir;
 
@@ -80,31 +80,13 @@ module.exports = Source = (function() {
   }
 
   Source.prototype.load = function(callback) {
-    return file.read(this.path, makeLoaderCallback(this, callback));
+    return file.readFile(this.path, null, makeLoaderCallback(this, callback));
+  };
+
+  Source.prototype.update = function(callback) {
+    return typeof callback === "function" ? callback(null, this) : void 0;
   };
 
   return Source;
 
 })();
-
-/*
-function(path) {
-     this.migrateImages = function(folder, callback) {
-        workers = [];
-        
-        this.images.forEach(function(img) {
-            workers.push(makeWorker(img, folder));
-        });
-
-        if (workers.length > 0){
-            async.parallel(workers, function(err, result) {
-                callback(err, result);
-            });
-        } 
-        callback(null, null);
-    };
-    
- 
-};
-*/
-

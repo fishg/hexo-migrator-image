@@ -1,7 +1,7 @@
 # Hexo
 extend = hexo.extend
 util = hexo.util
-file = util.file
+file = hexo.file
 sourceDir = hexo.source_dir
 
 # 
@@ -11,6 +11,7 @@ imageFolder = "images\\"
 request = require 'request'
 async = require 'async'
 colors = require 'colors'
+fs = require 'fs'
 
 # Local
 Source = require './MarkdownSource'
@@ -22,9 +23,19 @@ colorfulLog = (verb, count, msg) ->
         format += msg
         console.log format
 
-openSourceFolder = (next) ->
+initialize = (next) ->
+        imageDir = sourceDir + imageFolder
+        colorfulLog "Check ", null, imageDir
+        exists = fs.existsSync imageDir
+        if not exists
+                colorfulLog "Make ", null, imageDir
+                fs.mkdirSync imageDir
+
+        next? null, null
+                        
+openSourceFolder = (nothing, next) ->
         colorfulLog "Open", 1, sourceDir
-        file.dir sourceDir,(files) ->
+        file.list sourceDir, null, (err, files) ->
                 files = files.filter (f) -> f.match ".*?\.md"
                 colorfulLog "Found", files.length, "posts"
                 next? null, files
@@ -72,14 +83,33 @@ downloadImages = (srcs, next) ->
                 # Pass sources along, not images
                 next? null, srcs
 
+updateSourceFile = (srcs, next) ->
+        # Parallelly load scripts
+        tasks = []
+
+        srcs.forEach (src) ->
+                tasks.push (callback) -> src.update callback
+
+        async.parallel tasks, (err, results) ->
+                colorfulLog "Update", results.length, "source files"
+                sum = 0
+                for src in results
+                        sum += src.images.length
+
+                colorfulLog "Update", sum, "images"
+                next? null, results
+
+        
         
 extend.migrator.register 'image', (args) ->
         console.log "whatever"
  
         async.waterfall [
+                initialize,
                 openSourceFolder,
                 loadSourceFile,
-                downloadImages
+                downloadImages,
+                updateSourceFile
                 ], (err, result) ->
                         console.log("Summary")
                         colorfulLog "Error", (if err? then err.length else 0), ""

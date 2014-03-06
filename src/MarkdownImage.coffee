@@ -1,4 +1,4 @@
-file = hexo.util.file
+file = hexo.file
 
 # downloader = require('./downloader')
 
