@@ -11,6 +11,12 @@ module.exports = Image = (function() {
     this.localPath = "";
   }
 
+  Image.prototype.download = function(downloader, callback) {
+    return downloader.download(this, function() {
+      return typeof callback === "function" ? callback() : void 0;
+    });
+  };
+
   return Image;
 
 })();

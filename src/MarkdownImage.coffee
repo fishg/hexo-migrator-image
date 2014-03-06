@@ -5,6 +5,10 @@ file = hexo.util.file
 module.exports = class Image
         constructor: (@alt, @url, @opt) ->
                 @localPath = ""
+        download: (downloader, callback) ->
+                downloader.download @, () ->
+                        # TODO:
+                        callback?()
 ###
 module.exports = function(alt, url, opt) {
     this.alt = alt;

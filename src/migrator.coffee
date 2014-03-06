@@ -4,6 +4,9 @@ util = hexo.util
 file = util.file
 sourceDir = hexo.source_dir
 
+# 
+imageFolder = "images\\"
+
 # Modules
 request = require 'request'
 async = require 'async'
@@ -11,6 +14,7 @@ colors = require 'colors'
 
 # Local
 Source = require './MarkdownSource'
+Downloader = require './Downloader'
 
 colorfulLog = (verb, count, msg) ->
         format = "#{verb.green}"
@@ -45,10 +49,28 @@ loadSourceFile = (files, next) ->
                 sum = 0
                 for src in results
                         sum += src.images.length
-                        for img in src.images
-                                colorfulLog "[GET]", img.url, [img.alt, img.opt]
+
                 colorfulLog "Found", sum, "images"
                 next? null, results
+
+downloadImages = (srcs, next) ->
+        # Parallelly load scripts
+        tasks = []
+
+        # Initialize downloader
+        downloader = new Downloader sourceDir + imageFolder
+        
+        srcs.forEach (src) ->
+                src.images.forEach (img) ->
+                        tasks.push (callback) ->
+                                img.download downloader, callback
+
+        colorfulLog "Download", tasks.length, "images"
+        
+        async.parallel tasks, (err, results) ->
+                colorfulLog "Failed", (if err? then err.length else 0), "images"
+                # Pass sources along, not images
+                next? null, srcs
 
         
 extend.migrator.register 'image', (args) ->
@@ -57,8 +79,8 @@ extend.migrator.register 'image', (args) ->
         async.waterfall [
                 openSourceFolder,
                 loadSourceFile,
-                #downloadImages
+                downloadImages
                 ], (err, result) ->
-                        console.log("All done!")
-                        console.log("Error", err?.length, "")
-                        console.log("Success", result?.length, "")
+                        console.log("Summary")
+                        colorfulLog "Error", (if err? then err.length else 0), ""
+                        colorfulLog "Success", (if result? then result.length else 0), ""
