@@ -30,35 +30,33 @@ loadSourceFile = (files, next) ->
         tasks = []
 
         makeTask = (path) ->
-            return (callback) ->
-                src = new source path
-                src.load callback
+                return (callback) ->
+                        src = new Source path
+                        src.load callback
 
         files.forEach (f) ->
 
-            fullPath = sourceDir + f
+                fullPath = sourceDir + f
 
-            tasks.push makeTask fullPath
+                tasks.push makeTask fullPath
 
         async.parallel tasks, (err, results) ->
-            colorfulLog "Load", results.length, "source files"
-
-            next? null, results
+                colorfulLog "Load", results.length, "source files"
+                sum = 0
+                for src in results
+                       sum += src.src.length
+                colorfulLog "Read", sum, "long"
+                next? null, results
 
         
 extend.migrator.register 'image', (args) ->
         console.log "whatever"
-        openSourceFolder null
  
-
-
-
-
-
-
-
-
-
-
-
-
+        async.waterfall [
+                openSourceFolder,
+                loadSourceFile,
+                #downloadImages
+                ], (err, result) ->
+                        console.log("All done!")
+                        console.log("Error", err?.length, "")
+                        console.log("Success", result?.length, "")

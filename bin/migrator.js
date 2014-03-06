@@ -42,7 +42,7 @@ loadSourceFile = function(files, next) {
   makeTask = function(path) {
     return function(callback) {
       var src;
-      src = new source(path);
+      src = new Source(path);
       return src.load(callback);
     };
   };
@@ -52,12 +52,23 @@ loadSourceFile = function(files, next) {
     return tasks.push(makeTask(fullPath));
   });
   return async.parallel(tasks, function(err, results) {
+    var src, sum, _i, _len;
     colorfulLog("Load", results.length, "source files");
+    sum = 0;
+    for (_i = 0, _len = results.length; _i < _len; _i++) {
+      src = results[_i];
+      sum += src.src.length;
+    }
+    colorfulLog("Read", sum, "long");
     return typeof next === "function" ? next(null, results) : void 0;
   });
 };
 
 extend.migrator.register('image', function(args) {
   console.log("whatever");
-  return openSourceFolder(null);
+  return async.waterfall([openSourceFolder, loadSourceFile], function(err, result) {
+    console.log("All done!");
+    console.log("Error", err != null ? err.length : void 0, "");
+    return console.log("Success", result != null ? result.length : void 0, "");
+  });
 });
