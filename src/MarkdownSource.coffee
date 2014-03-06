@@ -3,7 +3,7 @@ util = hexo.util
 file = util.file
 sourceDir = hexo.source_dir
 
-#image = require './markdown-image'
+Image = require './MarkdownImage'
 async = require 'async'
 
 MatchImageUrl = (url) ->
@@ -40,7 +40,7 @@ MatchImageMarkDown = (src) ->
                 rest = m[6]
 
                 r = MatchImageUrl rest
-                item = new image alt_, r[0], r[1]
+                item = new Image alt_, r[0], r[1]
                 items.push(item)
 
         return items
@@ -56,7 +56,7 @@ makeLoaderCallback = (source, callback) ->
         if err? then return callback(err)
         if not src? then return callback(new Error("Null source."))
         source.src = src
-        #source.images = MatchImageMarkDown(src)
+        source.images = MatchImageMarkDown(src)
 
         return callback(null, source)
 

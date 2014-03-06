@@ -44,8 +44,10 @@ loadSourceFile = (files, next) ->
                 colorfulLog "Load", results.length, "source files"
                 sum = 0
                 for src in results
-                       sum += src.src.length
-                colorfulLog "Read", sum, "long"
+                        sum += src.images.length
+                        for img in src.images
+                                colorfulLog "[GET]", img.url, [img.alt, img.opt]
+                colorfulLog "Found", sum, "images"
                 next? null, results
 
         

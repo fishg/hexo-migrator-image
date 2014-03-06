@@ -52,14 +52,19 @@ loadSourceFile = function(files, next) {
     return tasks.push(makeTask(fullPath));
   });
   return async.parallel(tasks, function(err, results) {
-    var src, sum, _i, _len;
+    var img, src, sum, _i, _j, _len, _len1, _ref;
     colorfulLog("Load", results.length, "source files");
     sum = 0;
     for (_i = 0, _len = results.length; _i < _len; _i++) {
       src = results[_i];
-      sum += src.src.length;
+      sum += src.images.length;
+      _ref = src.images;
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        img = _ref[_j];
+        colorfulLog("[GET]", img.url, [img.alt, img.opt]);
+      }
     }
-    colorfulLog("Read", sum, "long");
+    colorfulLog("Found", sum, "images");
     return typeof next === "function" ? next(null, results) : void 0;
   });
 };
