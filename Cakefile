@@ -170,9 +170,9 @@ build = (watch, callback) ->
 # **and** file ends in '.coffee'
 # **then** convert '.coffee' to '.js'
 # **and** remove the result
-unlinkIfCoffeeFile = (file) ->
+unlinkIfCoffeeFile = (file, folder) ->
   if file.match /\.coffee$/
-    fs.unlink file.replace('src','lib').replace(/\.coffee$/, '.js'), ->
+    fs.unlink file.replace(folder,output).replace(/\.coffee$/, '.js'), ->
     true
   else false
 
@@ -187,7 +187,7 @@ clean = (callback) ->
       unless unlinkIfCoffeeFile file
         walk file, (err, results) ->
           for f in results
-            unlinkIfCoffeeFile f
+            unlinkIfCoffeeFile f, file
 
     callback?()
   catch err
