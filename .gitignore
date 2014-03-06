@@ -19,7 +19,6 @@ Thumbs.db
 *.cache
 *.ilk
 *.log
-[Bb]in
 [Dd]ebug*/
 *.lib
 *.sbr
@@ -30,3 +29,4 @@ _ReSharper*/
 eproject.cfg
 Project.ede
 *~
+node_modules
