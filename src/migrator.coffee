@@ -36,7 +36,7 @@ initialize = (next) ->
 openSourceFolder = (nothing, next) ->
         colorfulLog "Open", 1, sourceDir
         file.list sourceDir, null, (err, files) ->
-                files = files.filter (f) -> f.match ".*?\.md"
+                files = files.filter (f) -> f.match ".*?\.md$"
                 colorfulLog "Found", files.length, "posts"
                 next? null, files
 
@@ -76,7 +76,7 @@ downloadImages = (srcs, next) ->
                         tasks.push (callback) ->
                                 img.download downloader, callback
 
-        colorfulLog "Download", tasks.length, "images"
+        colorfulLog "Save", tasks.length, "images"
         
         async.parallel tasks, (err, results) ->
                 colorfulLog "Failed", (if err? then err.length else 0), "images"
@@ -94,7 +94,7 @@ updateSourceFile = (srcs, next) ->
                 colorfulLog "Update", results.length, "source files"
                 sum = 0
                 for src in results
-                        sum += src.images.length
+                        sum += if src.images? then src.images.length else 0
 
                 colorfulLog "Update", sum, "images"
                 next? null, results

@@ -34,55 +34,57 @@ module.exports = class Downloader
                 # Skip downloaded
                 if fs.existsSync(to)
                         console.log("SKIP".green + " %s", fileName)
-                        callback?(null, to)
+                        callback?(null, fileName)
                         return
 
                 isRemote = isRemoteUrl(url)
                 isLocal = isLocalUrl(url)
 
                 if isRemote
-                        @downloadRemoteImage url, to, (err, succ) ->
+                        @downloadRemoteImage url, fileName, (err, succ) ->
                                 img.localPath = succ
                                 callback?(err, succ)
                 else
-                        @copyLocalImage url, to, (err, succ) ->
+                        @copyLocalImage url, fileName, (err, succ) ->
                                 img.localPath = succ
                                 callback?(err, succ)
 
-        downloadRemoteImage: (from, to, callback) ->
+        downloadRemoteImage: (from, fileName, callback) ->
+                to = @imageDir + fileName
                 request = http.get(from, ((response) ->
                         if (response.statusCode == 200)
                                 console.log("HTTP ".blue + "%d ".green + "%s", response.statusCode, from);
 
                                 ws = fs.createWriteStream(to)
-                                        .on("error", (err) -> callback?(err, to))
+                                        .on("error", (err) -> callback?(err, fileName))
                                         .on("close", ((err) ->
                                                 console.log("SAVE".green + " %s", to)
-                                                callback?(null, to)))
+                                                callback?(null, fileName)))
                                         
                                 response.pipe(ws)
                         else
                                 console.log "HTTP ".blue + "%d ".red.blue + "%s", response.statusCode, from
-                                callback?(new Error("HTTP " + response.statusCode), to)
+                                callback?(new Error("HTTP " + response.statusCode), fileName)
                         
                     ))
                     .on("error", (err) ->
                         console.log(err.message)
-                        callback(err, to)
+                        callback(err, fileName)
                     )
 
 
-        copyLocalImage: (from, to, callback) ->
+        copyLocalImage: (from, fileName, callback) ->
+                to = @imageFolder + fileName
                 console.log("COPY ".blue + "FROM ".yellow + "%s", from)
                 ws = fs.createWriteStream(to)
                     .on("error", ((err) ->
                         console.log("COPY ".blue + "ErrW ".green + "%s", to)
-                        callback?(err, to)))
+                        callback?(err, fileName)))
                     .on("close", ((err) ->
                         console.log("COPY ".blue + "DONE ".green + "%s", to)
-                        callback?(null, to)))
+                        callback?(null, fileName)))
                 rs = fs.createReadStream(from)
                     .on("error", ((err) ->
                         console.log("COPY ".blue + "ErrR ".green + "%s", from)
-                        callback?(err, to)))
+                        callback?(err, fileName)))
                     .pipe(ws)

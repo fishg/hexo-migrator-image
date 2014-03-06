@@ -46,61 +46,63 @@ module.exports = Downloader = (function() {
     if (fs.existsSync(to)) {
       console.log("SKIP".green + " %s", fileName);
       if (typeof callback === "function") {
-        callback(null, to);
+        callback(null, fileName);
       }
       return;
     }
     isRemote = isRemoteUrl(url);
     isLocal = isLocalUrl(url);
     if (isRemote) {
-      return this.downloadRemoteImage(url, to, function(err, succ) {
+      return this.downloadRemoteImage(url, fileName, function(err, succ) {
         img.localPath = succ;
         return typeof callback === "function" ? callback(err, succ) : void 0;
       });
     } else {
-      return this.copyLocalImage(url, to, function(err, succ) {
+      return this.copyLocalImage(url, fileName, function(err, succ) {
         img.localPath = succ;
         return typeof callback === "function" ? callback(err, succ) : void 0;
       });
     }
   };
 
-  Downloader.prototype.downloadRemoteImage = function(from, to, callback) {
-    var request;
+  Downloader.prototype.downloadRemoteImage = function(from, fileName, callback) {
+    var request, to;
+    to = this.imageDir + fileName;
     return request = http.get(from, (function(response) {
       var ws;
       if (response.statusCode === 200) {
         console.log("HTTP ".blue + "%d ".green + "%s", response.statusCode, from);
         ws = fs.createWriteStream(to).on("error", function(err) {
-          return typeof callback === "function" ? callback(err, to) : void 0;
+          return typeof callback === "function" ? callback(err, fileName) : void 0;
         }).on("close", (function(err) {
           console.log("SAVE".green + " %s", to);
-          return typeof callback === "function" ? callback(null, to) : void 0;
+          return typeof callback === "function" ? callback(null, fileName) : void 0;
         }));
         return response.pipe(ws);
       } else {
         console.log("HTTP ".blue + "%d ".red.blue + "%s", response.statusCode, from);
-        return typeof callback === "function" ? callback(new Error("HTTP " + response.statusCode), to) : void 0;
+        return typeof callback === "function" ? callback(new Error("HTTP " + response.statusCode), fileName) : void 0;
       }
     })).on("error", function(err) {
       console.log(err.message);
-      return callback(err, to);
+      return callback(err, fileName);
     });
   };
 
-  Downloader.prototype.copyLocalImage = function(from, to, callback) {
-    var rs, ws;
+  Downloader.prototype.copyLocalImage = function(from, fileName, callback) {
+    var rs, to, ws;
+    to = this.imageFolder + fileName;
     console.log("COPY ".blue + "FROM ".yellow + "%s", from);
     ws = fs.createWriteStream(to).on("error", (function(err) {
       console.log("COPY ".blue + "ErrW ".green + "%s", to);
-      return typeof callback === "function" ? callback(err, to) : void 0;
+      return typeof callback === "function" ? callback(err, fileName) : void 0;
     })).on("close", (function(err) {
       console.log("COPY ".blue + "DONE ".green + "%s", to);
-      return typeof callback === "function" ? callback(null, to) : void 0;
+      return typeof callback === "function" ? callback(null, fileName) : void 0;
     }));
     return rs = fs.createReadStream(from).on("error", (function(err) {
       console.log("COPY ".blue + "ErrR ".green + "%s", from);
-      return typeof callback === "function" ? callback(err, to) : void 0;
+      return typeof callback === "function" ? callback(err, fileName) : void 0;
     })).pipe(ws);
   };
 

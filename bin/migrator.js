@@ -47,7 +47,7 @@ openSourceFolder = function(nothing, next) {
   colorfulLog("Open", 1, sourceDir);
   return file.list(sourceDir, null, function(err, files) {
     files = files.filter(function(f) {
-      return f.match(".*?\.md");
+      return f.match(".*?\.md$");
     });
     colorfulLog("Found", files.length, "posts");
     return typeof next === "function" ? next(null, files) : void 0;
@@ -93,7 +93,7 @@ downloadImages = function(srcs, next) {
       });
     });
   });
-  colorfulLog("Download", tasks.length, "images");
+  colorfulLog("Save", tasks.length, "images");
   return async.parallel(tasks, function(err, results) {
     colorfulLog("Failed", (err != null ? err.length : 0), "images");
     return typeof next === "function" ? next(null, srcs) : void 0;
@@ -114,7 +114,7 @@ updateSourceFile = function(srcs, next) {
     sum = 0;
     for (_i = 0, _len = results.length; _i < _len; _i++) {
       src = results[_i];
-      sum += src.images.length;
+      sum += src.images != null ? src.images.length : 0;
     }
     colorfulLog("Update", sum, "images");
     return typeof next === "function" ? next(null, results) : void 0;

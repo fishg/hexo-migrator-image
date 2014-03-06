@@ -40,8 +40,10 @@ MatchImageMarkDown = (src) ->
                 rest = m[6]
 
                 r = MatchImageUrl rest
-                item = new Image alt_, r[0], r[1]
-                items.push(item)
+                # Skip saved image
+                if r[0]?.indexOf("{{BASE_PATH}}") != 0
+                        item = new Image alt_, r[0], r[1]
+                        items.push(item)
 
         return items
 
@@ -60,6 +62,8 @@ makeLoaderCallback = (source, callback) ->
 
         return callback(null, source)
 
+escapeRegExp = (str) ->
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
 
 module.exports = class Source
         constructor: (@path) ->
@@ -70,6 +74,18 @@ module.exports = class Source
                 file.readFile(@path, null, makeLoaderCallback(@, callback))
 
         update: (callback) ->
-                # TODO
-                callback?(null, @)
+                newSrc = @src
+                for img in @images
+                        r = new RegExp escapeRegExp img.url, "g"
+                        newSrc = newSrc.replace r, "{{BASE_PATH}}/images/#{img.localPath}"
+                        #console.log "#{img.url} -> #{img.localPath}"
+                # write backup file
+                file.writeFile "#{@path}.bak", @src, (err) =>
+                        if err?
+                                console.log "Fail to backup #{@path}"
+                        file.writeFile @path, newSrc, (err) ->
+                                if err?
+                                        callback? err, @
+                                else
+                                        callback? null, @
                 
