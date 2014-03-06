@@ -79,8 +79,12 @@ module.exports = class Source
                         r = new RegExp escapeRegExp img.url, "g"
                         newSrc = newSrc.replace r, "{{BASE_PATH}}/images/#{img.localPath}"
                         #console.log "#{img.url} -> #{img.localPath}"
+                d = new Date()
+                timestamp = d.toISOString()
+                        .replace(/:/g, "-")
+                console.log timestamp
                 # write backup file
-                file.writeFile "#{@path}.bak", @src, (err) =>
+                file.writeFile "#{@path}.#{timestamp}.bak", @src, (err) =>
                         if err?
                                 console.log "Fail to backup #{@path}"
                         file.writeFile @path, newSrc, (err) ->

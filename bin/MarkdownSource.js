@@ -90,7 +90,7 @@ module.exports = Source = (function() {
   };
 
   Source.prototype.update = function(callback) {
-    var img, newSrc, r, _i, _len, _ref,
+    var d, img, newSrc, r, timestamp, _i, _len, _ref,
       _this = this;
     newSrc = this.src;
     _ref = this.images;
@@ -99,7 +99,10 @@ module.exports = Source = (function() {
       r = new RegExp(escapeRegExp(img.url, "g"));
       newSrc = newSrc.replace(r, "{{BASE_PATH}}/images/" + img.localPath);
     }
-    return file.writeFile("" + this.path + ".bak", this.src, function(err) {
+    d = new Date();
+    timestamp = d.toISOString().replace(/:/g, "-");
+    console.log(timestamp);
+    return file.writeFile("" + this.path + "." + timestamp + ".bak", this.src, function(err) {
       if (err != null) {
         console.log("Fail to backup " + _this.path);
       }

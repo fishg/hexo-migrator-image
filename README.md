@@ -12,8 +12,8 @@ A Hexo migrator that imports remote or local images referenced in markdown sourc
 This migrator scans all ```.md``` files in a hexo blog folder for Markdown's image tags.
 Then downloads (remote) or copies (local) files to ```source/images``` folder and updates all urls in the posts.
 The images' file names are SHA1 digest of its original url.
-A ```.bak``` file will be created each time and overwrites last backup files without prompt.
-So it is best to **use version control** or **make backups before running this tool**.
+A backup file named ```.md.#timestamp#.bak``` file will be created for each ```.md``` files every time.
+However it is better to **use version control** or **make a copy** just in case.
 
 ## Usage
 
