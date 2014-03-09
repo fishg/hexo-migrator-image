@@ -82,7 +82,7 @@ module.exports = class Source
                 d = new Date()
                 timestamp = d.toISOString()
                         .replace(/:/g, "-")
-                console.log timestamp
+
                 # write backup file
                 file.writeFile "#{@path}.#{timestamp}.bak", @src, (err) =>
                         if err?

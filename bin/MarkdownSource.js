@@ -101,7 +101,6 @@ module.exports = Source = (function() {
     }
     d = new Date();
     timestamp = d.toISOString().replace(/:/g, "-");
-    console.log(timestamp);
     return file.writeFile("" + this.path + "." + timestamp + ".bak", this.src, function(err) {
       if (err != null) {
         console.log("Fail to backup " + _this.path);
