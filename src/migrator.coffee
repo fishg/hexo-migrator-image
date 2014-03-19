@@ -5,13 +5,14 @@ file = hexo.file
 sourceDir = hexo.source_dir
 
 # 
-imageFolder = "images\\"
+imageFolder = "images"
 
 # Modules
 request = require 'request'
 async = require 'async'
 colors = require 'colors'
 fs = require 'fs'
+Path = require 'path'
 
 # Local
 Source = require './MarkdownSource'
@@ -24,7 +25,7 @@ colorfulLog = (verb, count, msg) ->
         console.log format
 
 initialize = (next) ->
-        imageDir = sourceDir + imageFolder
+        imageDir = Path.resolve sourceDir, imageFolder
         colorfulLog "Check ", null, imageDir
         exists = fs.existsSync imageDir
         if not exists
@@ -69,7 +70,7 @@ downloadImages = (srcs, next) ->
         tasks = []
 
         # Initialize downloader
-        downloader = new Downloader sourceDir + imageFolder
+        downloader = new Downloader Path.resolve sourceDir, imageFolder
         
         srcs.forEach (src) ->
                 src.images.forEach (img) ->

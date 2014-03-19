@@ -50,7 +50,7 @@ module.exports = class Downloader
                                 callback?(err, succ)
 
         downloadRemoteImage: (from, fileName, callback) ->
-                to = @imageDir + fileName
+                to = Path.resolve @imageFolder, fileName
                 request = http.get(from, ((response) ->
                         if (response.statusCode == 200)
                                 console.log("HTTP ".blue + "%d ".green + "%s", response.statusCode, from);
@@ -74,7 +74,7 @@ module.exports = class Downloader
 
 
         copyLocalImage: (from, fileName, callback) ->
-                to = @imageFolder + fileName
+                to = Path.resolve @imageFolder, fileName
                 console.log("COPY ".blue + "FROM ".yellow + "%s", from)
                 ws = fs.createWriteStream(to)
                     .on("error", ((err) ->

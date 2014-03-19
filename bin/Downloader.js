@@ -67,7 +67,7 @@ module.exports = Downloader = (function() {
 
   Downloader.prototype.downloadRemoteImage = function(from, fileName, callback) {
     var request, to;
-    to = this.imageDir + fileName;
+    to = Path.resolve(this.imageFolder, fileName);
     return request = http.get(from, (function(response) {
       var ws;
       if (response.statusCode === 200) {
@@ -91,7 +91,7 @@ module.exports = Downloader = (function() {
 
   Downloader.prototype.copyLocalImage = function(from, fileName, callback) {
     var rs, to, ws;
-    to = this.imageFolder + fileName;
+    to = Path.resolve(this.imageFolder, fileName);
     console.log("COPY ".blue + "FROM ".yellow + "%s", from);
     ws = fs.createWriteStream(to).on("error", (function(err) {
       console.log("COPY ".blue + "ErrW ".green + "%s", to);
