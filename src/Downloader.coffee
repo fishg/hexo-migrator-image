@@ -3,6 +3,7 @@ Url = require 'url'
 Path = require 'path'
 crypto = require 'crypto'
 http = require 'http'
+https = require 'https'
 colors = require 'colors'
 file = hexo.file
 
@@ -24,7 +25,7 @@ defaultFileName = (path) ->
 
 module.exports = class Downloader
         constructor: (@imageFolder) ->
-                
+
         download: (img, callback) ->
                 # TODO: download
                 url = img.url
@@ -51,7 +52,8 @@ module.exports = class Downloader
 
         downloadRemoteImage: (from, fileName, callback) ->
                 to = Path.resolve @imageFolder, fileName
-                request = http.get(from, ((response) ->
+                protocol = if(Url.parse(from) == 'https:') then https else http
+                request = protocol.get(from, ((response) ->
                         if (response.statusCode == 200)
                                 console.log("HTTP ".blue + "%d ".green + "%s", response.statusCode, from);
 
@@ -60,12 +62,12 @@ module.exports = class Downloader
                                         .on("close", ((err) ->
                                                 console.log("SAVE".green + " %s", to)
                                                 callback?(null, fileName)))
-                                        
+
                                 response.pipe(ws)
                         else
                                 console.log "HTTP ".blue + "%d ".red.blue + "%s", response.statusCode, from
                                 callback?(new Error("HTTP " + response.statusCode), fileName)
-                        
+
                     ))
                     .on("error", (err) ->
                         console.log(err.message)
