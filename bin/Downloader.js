@@ -70,7 +70,7 @@ module.exports = Downloader = (function() {
   Downloader.prototype.downloadRemoteImage = function(from, fileName, callback) {
     var protocol, request, to;
     to = Path.resolve(this.imageFolder, fileName);
-    protocol = Url.parse(from) === 'https:' ? https : http;
+    protocol = Url.parse(from).protocol === 'https:' ? https : http;
     return request = protocol.get(from, (function(response) {
       var ws;
       if (response.statusCode === 200) {

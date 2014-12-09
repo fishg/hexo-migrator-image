@@ -52,7 +52,7 @@ module.exports = class Downloader
 
         downloadRemoteImage: (from, fileName, callback) ->
                 to = Path.resolve @imageFolder, fileName
-                protocol = if(Url.parse(from) == 'https:') then https else http
+                protocol = if(Url.parse(from).protocol == 'https:') then https else http
                 request = protocol.get(from, ((response) ->
                         if (response.statusCode == 200)
                                 console.log("HTTP ".blue + "%d ".green + "%s", response.statusCode, from);
