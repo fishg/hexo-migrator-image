@@ -2,10 +2,13 @@ fs = require 'fs'
 Url = require 'url'
 Path = require 'path'
 crypto = require 'crypto'
-http = require 'http'
-https = require 'https'
 colors = require 'colors'
 file = hexo.file
+
+# Add future protocol extensions here
+protocols =
+        http: require 'http'
+        https: require 'https'
 
 isRemoteUrl = (url) ->
         return url.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/)?
@@ -52,10 +55,14 @@ module.exports = class Downloader
 
         downloadRemoteImage: (from, fileName, callback) ->
                 to = Path.resolve @imageFolder, fileName
-                protocol = if(Url.parse(from).protocol == 'https:') then https else http
+                protocol_name = Url.parse(from).protocol
+                protocol = protocols[protocol_name]
+                if not protocol?
+                        return callback?(new Error("Unsupported protocol '#{protocol_name}'"), fileName)
+
                 request = protocol.get(from, ((response) ->
                         if (response.statusCode == 200)
-                                console.log("HTTP ".blue + "%d ".green + "%s", response.statusCode, from);
+                                console.log("#{protocol_name} ".blue + "%d ".green + "%s", response.statusCode, from);
 
                                 ws = fs.createWriteStream(to)
                                         .on("error", (err) -> callback?(err, fileName))
