@@ -2,9 +2,13 @@ fs = require 'fs'
 Url = require 'url'
 Path = require 'path'
 crypto = require 'crypto'
-http = require 'http'
 colors = require 'colors'
 file = hexo.file
+
+# Add future protocol extensions here
+protocols =
+        http: require 'http'
+        https: require 'https'
 
 isRemoteUrl = (url) ->
         return url.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/)?
@@ -24,7 +28,7 @@ defaultFileName = (path) ->
 
 module.exports = class Downloader
         constructor: (@imageFolder) ->
-                
+
         download: (img, callback) ->
                 # TODO: download
                 url = img.url
@@ -51,21 +55,26 @@ module.exports = class Downloader
 
         downloadRemoteImage: (from, fileName, callback) ->
                 to = Path.resolve @imageFolder, fileName
-                request = http.get(from, ((response) ->
+                protocol_name = Url.parse(from).protocol
+                protocol = protocols[protocol_name]
+                if not protocol?
+                        return callback?(new Error("Unsupported protocol '#{protocol_name}'"), fileName)
+
+                request = protocol.get(from, ((response) ->
                         if (response.statusCode == 200)
-                                console.log("HTTP ".blue + "%d ".green + "%s", response.statusCode, from);
+                                console.log("#{protocol_name} ".blue + "%d ".green + "%s", response.statusCode, from);
 
                                 ws = fs.createWriteStream(to)
                                         .on("error", (err) -> callback?(err, fileName))
                                         .on("close", ((err) ->
                                                 console.log("SAVE".green + " %s", to)
                                                 callback?(null, fileName)))
-                                        
+
                                 response.pipe(ws)
                         else
                                 console.log "HTTP ".blue + "%d ".red.blue + "%s", response.statusCode, from
                                 callback?(new Error("HTTP " + response.statusCode), fileName)
-                        
+
                     ))
                     .on("error", (err) ->
                         console.log(err.message)
