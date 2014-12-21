@@ -14,8 +14,8 @@ colors = require('colors');
 file = hexo.file;
 
 protocols = {
-  http: require('http'),
-  https: require('https')
+  'http:': require('http'),
+  'https:': require('https')
 };
 
 isLocalUrl = function(url) {
@@ -51,9 +51,10 @@ module.exports = Downloader = (function() {
     }
     isLocal = isLocalUrl(url);
     if (isLocal) {
-      this.copyLocalImage(url, fileName, function(err, succ) {});
-      img.localPath = succ;
-      return typeof callback === "function" ? callback(err, succ) : void 0;
+      return this.copyLocalImage(url, fileName, function(err, succ) {
+        img.localPath = succ;
+        return typeof callback === "function" ? callback(err, succ) : void 0;
+      });
     } else {
       return this.downloadRemoteImage(url, fileName, function(err, succ) {
         img.localPath = succ;
@@ -67,6 +68,7 @@ module.exports = Downloader = (function() {
     to = Path.resolve(this.imageFolder, fileName);
     protocol_name = Url.parse(from).protocol;
     protocol = protocols[protocol_name];
+    console.log(protocol_name);
     if (protocol == null) {
       err = new Error("Unsupported protocol '" + protocol_name + "'");
       return typeof callback === "function" ? callback(err, fileName) : void 0;

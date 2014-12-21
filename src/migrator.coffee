@@ -79,7 +79,9 @@ downloadImages = (srcs, next) ->
   colorfulLog "Save", tasks.length, "images"
 
   async.parallel tasks, (err, results) ->
-    colorfulLog "Failed", (if err? then err.length else 0), "images"
+    if err?
+      console.log err
+      colorfulLog "Failed ", err.length, " images"
     # Pass sources along, not images
     next? null, srcs
 
@@ -102,8 +104,6 @@ updateSourceFile = (srcs, next) ->
 
 
 extend.migrator.register 'image', (args) ->
-  console.log "whatever"
-
   async.waterfall [
     initialize,
     openSourceFolder,

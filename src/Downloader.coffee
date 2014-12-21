@@ -7,8 +7,8 @@ file = hexo.file
 
 # Add future protocol extensions here
 protocols =
-  http: require 'http'
-  https: require 'https'
+  'http:': require 'http'
+  'https:': require 'https'
 
 isLocalUrl = (url) ->
   return fs.existsSync(url)
@@ -41,8 +41,8 @@ module.exports = class Downloader
 
     if isLocal
       @copyLocalImage url, fileName, (err, succ) ->
-      img.localPath = succ
-      callback?(err, succ)
+        img.localPath = succ
+        callback?(err, succ)
     else
       @downloadRemoteImage url, fileName, (err, succ) ->
         img.localPath = succ
@@ -52,6 +52,7 @@ module.exports = class Downloader
     to = Path.resolve @imageFolder, fileName
     protocol_name = Url.parse(from).protocol
     protocol = protocols[protocol_name]
+    console.log protocol_name
     if not protocol?
       err = new Error("Unsupported protocol '#{protocol_name}'")
       return callback?(err, fileName)

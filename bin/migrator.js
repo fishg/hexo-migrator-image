@@ -97,7 +97,10 @@ downloadImages = function(srcs, next) {
   });
   colorfulLog("Save", tasks.length, "images");
   return async.parallel(tasks, function(err, results) {
-    colorfulLog("Failed", (err != null ? err.length : 0), "images");
+    if (err != null) {
+      console.log(err);
+      colorfulLog("Failed ", err.length, " images");
+    }
     return typeof next === "function" ? next(null, srcs) : void 0;
   });
 };
@@ -124,7 +127,6 @@ updateSourceFile = function(srcs, next) {
 };
 
 extend.migrator.register('image', function(args) {
-  console.log("whatever");
   return async.waterfall([initialize, openSourceFolder, loadSourceFile, downloadImages, updateSourceFile], function(err, result) {
     console.log("Summary");
     colorfulLog("Error", (err != null ? err.length : 0), "");
