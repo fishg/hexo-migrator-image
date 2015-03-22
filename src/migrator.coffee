@@ -94,10 +94,18 @@ updateSourceFile = (srcs, next) ->
   async.parallel tasks, (err, results) ->
     colorfulLog "Update", results.length, "source files"
     sum = 0
+    skipped = 0
     for src in results
-      sum += if src.images? then src.images.length else 0
+      if not src.images?
+        continue
+      for img in src.images
+        if img.skipped
+          skipped++
+        else
+          sum++
 
     colorfulLog "Update", sum, "images"
+    colorfulLog "Skipped", skipped, "images"
     next? null, results
 
 
