@@ -1,13 +1,19 @@
 {
   "name": "hexo-migrator-image",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Image migrator plugin for Hexo",
   "main": "./bin/migrator",
   "repository": {
     "type": "git",
     "url": "https://github.com/akfish/hexo-migrator-image.git"
   },
-  "keywords": ["website", "blog", "cms", "framework", "hexo"],
+  "keywords": [
+    "website",
+    "blog",
+    "cms",
+    "framework",
+    "hexo"
+  ],
   "author": "AKFish <akfish@gmail.com> (http://catx.me)",
   "license": {
     "type": "GPLv2",
@@ -23,6 +29,8 @@
     "url": "*",
     "path": "*",
     "crypto": "*",
-    "colors": "*"
+    "colors": "*",
+    "hexo-util": "~0.1.6",
+    "hexo-fs": "~0.1.3"
   }
 }

@@ -1,7 +1,6 @@
-extend = hexo.extend
-util = hexo.util
-file = hexo.file
-sourceDir = hexo.source_dir
+# util = hexo.util
+file = require 'hexo-fs'
+# sourceDir = hexo.source_dir
 
 Image = require './MarkdownImage'
 async = require 'async'
@@ -41,10 +40,10 @@ MatchImageMarkDown = (src) ->
 
     r = MatchImageUrl rest
     # Skip saved image
-    if r[0]?.indexOf("{{BASE_PATH}}") != 0
-      item = new Image alt_, r[0], r[1]
-      items.push(item)
-
+    if r[0]?.indexOf("{{BASE_PATH}}") == 0
+      continue
+    item = new Image alt_, r[0], r[1]
+    items.push(item)
   return items
 
 
@@ -76,12 +75,16 @@ module.exports = class Source
   update: (callback) ->
     newSrc = @src
     for img in @images
+      if img.skipped
+        continue
       r = new RegExp escapeRegExp img.url, "g"
-      newSrc = newSrc.replace r, "{{BASE_PATH}}/images/#{img.localPath}"
+      newSrc = newSrc.replace r, "/images/#{img.localPath}"
       #console.log "#{img.url} -> #{img.localPath}"
     d = new Date()
     timestamp = d.toISOString()
       .replace(/:/g, "-")
+
+    that = @
 
     # write backup file
     file.writeFile "#{@path}.#{timestamp}.bak", @src, (err) =>
@@ -89,6 +92,6 @@ module.exports = class Source
         console.log "Fail to backup #{@path}"
       file.writeFile @path, newSrc, (err) ->
         if err?
-          callback? err, @
+          callback? err, that
         else
-          callback? null, @
+          callback? null, that

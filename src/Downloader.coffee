@@ -3,7 +3,7 @@ Url = require 'url'
 Path = require 'path'
 crypto = require 'crypto'
 colors = require 'colors'
-file = hexo.file
+file = require 'hexo-fs'
 
 # Add future protocol extensions here
 protocols =
@@ -12,6 +12,9 @@ protocols =
 
 isLocalUrl = (url) ->
   return fs.existsSync(url)
+
+isRemoteUrl = (url) ->
+  return /\w+:\/\//.exec(url)?
 
 defaultFileName = (path) ->
   u = Url.parse(path)
@@ -38,15 +41,22 @@ module.exports = class Downloader
       return
 
     isLocal = isLocalUrl(url)
+    isRemote = isRemoteUrl(url)
 
     if isLocal
       @copyLocalImage url, fileName, (err, succ) ->
         img.localPath = succ
         callback?(err, succ)
-    else
+    else if isRemote
       @downloadRemoteImage url, fileName, (err, succ) ->
         img.localPath = succ
         callback?(err, succ)
+    else
+      console.log "SKIP".grey + " %s", url
+      img.localPath = url
+      img.skipped = true
+      callback?(null, url)
+
 
   downloadRemoteImage: (from, fileName, callback) ->
     to = Path.resolve @imageFolder, fileName
