@@ -1,6 +1,6 @@
 {
   "name": "hexo-migrator-image",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Image migrator plugin for Hexo",
   "main": "./bin/migrator",
   "repository": {
