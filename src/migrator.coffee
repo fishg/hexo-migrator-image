@@ -1,7 +1,6 @@
 # Hexo
 extend = hexo.extend
-util = hexo.util
-file = hexo.file
+file = require 'hexo-fs'
 sourceDir = hexo.source_dir
 
 imageFolder = "images"
@@ -35,7 +34,7 @@ initialize = (next) ->
 
 openSourceFolder = (nothing, next) ->
   colorfulLog "Open", 1, sourceDir
-  file.list sourceDir, null, (err, files) ->
+  file.listDir sourceDir, null, (err, files) ->
     files = files.filter (f) -> f.match ".*?\.md$"
     colorfulLog "Found", files.length, "posts"
     next? null, files

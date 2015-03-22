@@ -1,5 +1,3 @@
-file = hexo.file
-
 # downloader = require('./downloader')
 
 module.exports = class Image
@@ -9,4 +7,3 @@ module.exports = class Image
     downloader.download @, (err, succ) =>
       @localPath = succ
       callback?(err, succ)
-

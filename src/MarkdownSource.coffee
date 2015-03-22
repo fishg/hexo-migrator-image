@@ -1,7 +1,6 @@
-extend = hexo.extend
-util = hexo.util
-file = hexo.file
-sourceDir = hexo.source_dir
+# util = hexo.util
+file = require 'hexo-fs'
+# sourceDir = hexo.source_dir
 
 Image = require './MarkdownImage'
 async = require 'async'

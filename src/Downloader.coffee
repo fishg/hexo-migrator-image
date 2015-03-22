@@ -3,7 +3,7 @@ Url = require 'url'
 Path = require 'path'
 crypto = require 'crypto'
 colors = require 'colors'
-file = hexo.file
+file = require 'hexo-fs'
 
 # Add future protocol extensions here
 protocols =
