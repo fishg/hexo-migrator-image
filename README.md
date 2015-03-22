@@ -5,7 +5,7 @@ A Hexo migrator that imports remote or local images referenced in markdown sourc
 
 ## Install
 
-> npm install hexo-migrator-image
+> npm install hexo-migrator-image --save
 
 ## How Does It Work
 
@@ -22,4 +22,3 @@ However it is better to **use version control** or **make a copy** just in case.
 2. Before you deploy, run in your hexo blog folder:
 
 > hexo migrate image
-
