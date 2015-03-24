@@ -85,13 +85,8 @@ module.exports = class Source
       .replace(/:/g, "-")
 
     that = @
-
-    # write backup file
-    file.writeFile "#{@path}.#{timestamp}.bak", @src, (err) =>
+    file.writeFile @path, newSrc, (err) ->
       if err?
-        console.log "Fail to backup #{@path}"
-      file.writeFile @path, newSrc, (err) ->
-        if err?
-          callback? err, that
-        else
-          callback? null, that
+        callback? err, that
+      else
+        callback? null, that
